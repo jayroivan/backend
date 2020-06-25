@@ -7,11 +7,11 @@ exports.create = (req, res) => {
   const id = req.params.id
   Cuenta.findOne({user: id}).then(data => {
     const tarjeta = new Tarjeta({
-      nombre: req.body.nombre,
-      numero: req.body.numero,
-      mes: req.body.mes,
-      year: req.body.year,
-      codigo: req.body.codigo,
+      nombre: req.body.name,
+      numero: req.body.Number,
+      mes: req.body.Month,
+      year: req.body.Year,
+      codigo: req.body.Code,
       cuenta: data.id
     });
 
@@ -34,16 +34,25 @@ exports.create = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
-  Tarjeta.findById(id)
+  Tarjeta.findOne({cuenta: id})
     .then(data => {
       if (!data)
-        res.status(404).send({ message: `Usuario con id: ${id} no encontrado` });
-      else res.send(data);
+        res.status(404).send({ message: `Tarjeta con id: ${id} no encontrado` });
+      else 
+        res.status(200).send({
+          id: data.id,
+          nombre: data.nombre,
+          numero: data.numero,
+          mes: data.mes,
+          year: data.year,
+          codigo: data.codigo,
+          cuenta: data.cuenta
+      });
     })
     .catch(err => {
       res
         .status(500)
-        .send({ message: "Error obteniendo usuario con id: " + id });
+        .send({ message: "Error obteniendo Tarjeta con id: " + id });
     });
 };
 
@@ -62,7 +71,7 @@ exports.update = (req, res) => {
         res.status(404).send({
           message: `No se puede actualizar usuario con id: ${id}. Talvez no exista el Usuario!`
         });
-      } else res.send({ message: "Usuario actualizado Correctamente." });
+      } else res.send({ message: `Tarjeta Actualizada ${id} Correctamente.` });
     })
     .catch(err => {
       res.status(500).send({

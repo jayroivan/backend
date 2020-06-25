@@ -1,11 +1,11 @@
 module.exports = mongoose => {
   var schema = mongoose.Schema(
     {
-      tipo: String,
-      estado: String,
-      correo: String,
-      monto: String,
-      cuenta: {type:String, ref:"Cuentas"}
+      username: String,
+      names: String,
+      direction: String,
+      email: String,
+      password: String,
     },
     { timestamps: true }
   );
@@ -16,6 +16,6 @@ module.exports = mongoose => {
     return object;
   });
 
-  const Transaccion = mongoose.model("Transacciones", schema);
-  return Transaccion;
+  const Admin = mongoose.model("Admins", schema);
+  return Admin;
 };

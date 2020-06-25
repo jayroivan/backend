@@ -1,8 +1,11 @@
 const db = require("../models");
 const Usuario = db.users;
 const Cuenta = db.cuentas;
+const Admin = db.admins;
 const bcrypt = require('bcrypt');
+const { transacciones } = require("../models");
 
+var account = 1234;
 
 exports.create = (req, res) => {
   if (!req.body.name) {
@@ -19,11 +22,13 @@ exports.create = (req, res) => {
   });
 
   const cuenta = new Cuenta({
-    numero: '1234',
-    user: usuario.id
+    numero: account,
+    user: usuario.id,
   });
 
-  cuenta
+    account +=  1;
+  
+    cuenta
     .save(cuenta)
     .catch(err => {
       res.status(500).send({
@@ -35,7 +40,12 @@ exports.create = (req, res) => {
   usuario
     .save(usuario)
     .then(data => {
-      res.send(data);
+      Cuenta.findOne({user: data.id}).then(data2 => {
+        res.status(200).send({
+          account: data2.numero,
+          account_id : data2.id
+        });
+      });
     })
     .catch(err => {
       res.status(500).send({
@@ -45,13 +55,36 @@ exports.create = (req, res) => {
     });
 };
 
+exports.createadmin = (req, res) => {
+    const admin = new Admin({
+      username: req.body.username,
+      names: req.body.names,
+      direction: req.body.direction,
+      email: req.body.email,
+      password: bcrypt.hashSync(req.body.password, 10)
+    });
+
+    admin.save(admin).then(data => {
+      res.send(data);
+    })
+    .catch(err => {res.status(500).send({
+        message:
+          err.message || "Error al crear Admin."
+      });
+    });  
+};
+
 exports.findAll = (req, res) => {
   const nombre = req.query.nombre;
   var condition = nombre ? { nombre: { $regex: new RegExp(nombre), $options: "i" } } : {};
 
   Usuario.find(condition)
     .then(data => {
-      res.send(data);
+      Cuenta.find().then(data2 => {
+        transacciones.find().then(data3 => {
+          res.send({Users: data, Cuentas: data2, Transacciones: data3});
+        })
+      })
     })
     .catch(err => {
       res.status(500).send({
@@ -81,6 +114,45 @@ exports.findOne = (req, res) => {
       res
         .status(500)
         .send({ message: "Error obteniendo usuario con id: " + id });
+    });
+};
+
+exports.find_one = (req, res) => {
+
+  Usuario.findOne( {correo: req.query.correo})
+    .then(data => {
+      if (!data){
+        res.status(404).send({ message: 'Correo Invalido' });
+        console.log(data);}
+      else 
+        res.json(data);
+    })
+    .catch(err => {
+      res
+        .status(500)
+        .send({ message: "Error obteniendo Usuario" });
+    });
+};
+
+exports.cuenta = (req, res) => {
+
+  Cuenta.findOne( {user: req.query.user})
+    .then(data => {
+      if (!data){
+        res.status(404).send({ message: 'User Invalido' });
+        console.log(data);}
+      else 
+        //res.send(data);
+        res.status(200).send({
+          id: data.id,
+          numero: data.numero,
+          user: data.user
+        });
+    })
+    .catch(err => {
+      res
+        .status(500)
+        .send({ message: "Error obteniendo Cuenta" });
     });
 };
 

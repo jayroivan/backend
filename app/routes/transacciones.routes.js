@@ -5,6 +5,10 @@ module.exports = app => {
   
     router.post("/create/:id", transaccion.create);
 
+    router.get("/all/", transaccion.findAll);
+
+    router.get("/alls/", transaccion.Alls);
+
     router.get("/one/:id", transaccion.findOne);
 
     router.put("/update/:id", transaccion.update);

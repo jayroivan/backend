@@ -1,38 +1,60 @@
 const db = require("../models");
 const Transaccion = db.transacciones;
-const DetaTransaccion = db.detalletransacciones;
 const Cuenta = db.cuentas;
+const User = db.users;
 const bcrypt = require('bcrypt');
 
 exports.create = (req, res) => {
+
   const id = req.params.id
   Cuenta.findOne({user: id}).then(data => {
-    const detatransaciones = new DetaTransaccion({
+    const transaccion = new Transaccion({
       tipo: req.body.tipo,
       estado: req.body.estado,
       correo: req.body.correo,
-      monto: req.body.monto
-    });
-    
-    detatransaciones.save(detatransaciones);
-
-    const transaccion = new Transaccion({
-      detatransaccion: detatransaciones.id,
+      monto: req.body.monto,
       cuenta: data.id
     });
+      transaccion.save(transaccion).then(data => {
+        res.send(data);
+      })
+      .catch(err => {
+        res.status(500).send({
+          message:
+            err.message || "Error al realizar transaccion."
+        });
+      });
+  })
+};
 
-    transaccion.save(transaccion).then(data => {
-      res.send(data);
+exports.findAll = (req, res) => {
+  //const cuenta = req.params.id;
+  //var condition = cuenta ? { cuenta: { $regex: new RegExp(cuenta), $options: "i" } } : {};
+  Transaccion.find()
+    .then(data => {
+      res.status(200).send(data)
     })
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Error al realizar transaccion."
+          err.message || "Error al obtener todos los Usuarios."
       });
     });
-  })
+};
 
-  
+exports.Alls = (req, res) => {
+  //const cuenta = req.params.id;
+  //var condition = cuenta ? { cuenta: { $regex: new RegExp(cuenta), $options: "i" } } : {};
+  Transaccion.find({cuenta: req.query.cuenta})
+    .then(data => {
+      res.status(200).send(data)
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Error al obtener todos los Usuarios."
+      });
+    });
 };
 
 exports.findOne = (req, res) => {
@@ -60,7 +82,7 @@ exports.update = (req, res) => {
 
   const id = req.params.id;
 
-  DetaTransaccion.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+  Transaccion.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
     .then(data => {
       if (!data) {
         res.status(404).send({

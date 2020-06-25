@@ -10,7 +10,6 @@ db.users = require("./user.models.js")(mongoose);
 db.cuentas = require("./cuenta.models.js")(mongoose);
 db.tarjetas = require("./tarjeta.models.js")(mongoose);
 db.transacciones = require("./transaccion.models.js")(mongoose);
-db.detalletransacciones = require("./detalletransaccion.models.js")(mongoose);
-
+db.admins = require("./admin.models.js")(mongoose);
 
 module.exports = db;
