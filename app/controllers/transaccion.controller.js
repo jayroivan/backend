@@ -13,6 +13,8 @@ exports.create = (req, res) => {
       estado: req.body.estado,
       correo: req.body.correo,
       monto: req.body.monto,
+      emisor: req.body.emisor,
+      receptor: req.body.receptor,
       cuenta: data.id
     });
       transaccion.save(transaccion).then(data => {

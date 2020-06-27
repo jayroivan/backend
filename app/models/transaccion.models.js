@@ -5,6 +5,8 @@ module.exports = mongoose => {
       estado: String,
       correo: String,
       monto: String,
+      emisor: String,
+      receptor: String,
       cuenta: {type:String, ref:"Cuentas"}
     },
     { timestamps: true }
