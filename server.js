@@ -5,7 +5,7 @@ const cors = require("cors");
 const app = express();
 
 var corsOptions = {
-  origin: "https://saturnopagos.herokuapp.com"
+  origin: "https://pagosrapidos.herokuapp.com"
 };
 
 app.use(cors(corsOptions));
